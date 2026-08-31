@@ -87,6 +87,49 @@
   opacity: 0.85;
 }
 
+.proxima-dosis-fecha {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  text-transform: capitalize;
+}
+
+.proxima-dosis-estado {
+  margin: 0 0 14px;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.proxima-dosis-estado.vencida {
+  color: var(--negativo);
+  font-weight: 600;
+}
+
+.proxima-dosis.vencida {
+  border-color: var(--negativo);
+}
+
+.proxima-dosis-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.boton-secundario {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  background: var(--fondo);
+  color: var(--texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-secundario:active {
+  opacity: 0.8;
+}
+
 .resumen {
   display: flex;
   justify-content: space-between;

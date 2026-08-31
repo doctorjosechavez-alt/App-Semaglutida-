@@ -36,3 +36,22 @@ npm run preview
 - `src/components/RegistroList.tsx` — historial de registros.
 - `src/components/PesoChart.tsx` — gráfico lineal de peso (recharts).
 - `src/components/Resumen.tsx` — resumen de peso inicial/actual/cambio.
+- `src/components/ProximaDosis.tsx` — recordatorio de la siguiente dosis (fecha de
+  la última inyección + 7 días exactos).
+- `src/calendario.ts` — genera el archivo `.ics` para añadir la alarma al
+  Calendario del iPhone.
+
+## Recordatorio de la siguiente dosis
+
+La app calcula automáticamente la fecha de la siguiente dosis (7 días exactos
+después de tu última inyección registrada) y ofrece dos formas de recordarlo:
+
+1. **"Añadir alarma al calendario"** — descarga un archivo `.ics` con una
+   alarma a las 9:00 a. m. de ese día. Al abrirlo en el iPhone se agrega como
+   evento con recordatorio en la app Calendario, que sí puede avisarte aunque
+   la app/pestaña esté cerrada.
+2. **"Activar aviso en la app"** — pide permiso de notificaciones del
+   navegador y muestra un aviso dentro de la app cuando la dosis ya está
+   vencida. Solo funciona mientras abres la app (Safari/PWA en iOS no permite
+   que una web programe notificaciones nativas en segundo plano sin un
+   servidor push), así que la opción del calendario es la más confiable.

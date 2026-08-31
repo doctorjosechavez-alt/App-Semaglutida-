@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import PesoChart from './components/PesoChart'
+import ProximaDosis from './components/ProximaDosis'
 import RegistroForm from './components/RegistroForm'
 import RegistroList from './components/RegistroList'
 import Resumen from './components/Resumen'
@@ -31,6 +32,7 @@ export default function App() {
 
       <main className="contenido">
         <RegistroForm onAgregar={agregarRegistro} />
+        <ProximaDosis registros={registros} />
         <Resumen registros={registros} />
         <PesoChart registros={registros} />
         <RegistroList registros={registros} onEliminar={eliminarRegistro} />
