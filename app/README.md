@@ -38,6 +38,8 @@ npm run preview
 - `src/components/Resumen.tsx` — resumen de peso inicial/actual/cambio.
 - `src/components/ProximaDosis.tsx` — recordatorio de la siguiente dosis (fecha de
   la última inyección + 7 días exactos).
+- `src/components/ConcentracionChart.tsx` — curva de referencia de la
+  concentración de semaglutida durante los 7 días entre dosis.
 - `src/calendario.ts` — genera el archivo `.ics` para añadir la alarma al
   Calendario del iPhone.
 
@@ -55,3 +57,14 @@ después de tu última inyección registrada) y ofrece dos formas de recordarlo:
    vencida. Solo funciona mientras abres la app (Safari/PWA en iOS no permite
    que una web programe notificaciones nativas en segundo plano sin un
    servidor push), así que la opción del calendario es la más confiable.
+
+## Curva de concentración
+
+Muestra una referencia teórica de cómo decae la concentración de semaglutida
+entre una inyección y la siguiente, calculada con la vida media de eliminación
+del fármaco (~165 horas / ~7 días, según la información de prescripción de
+Ozempic/Wegovy de la FDA): `C(t) = 100% × 0.5^(t / 6.9 días)`. Si hay una
+inyección registrada dentro de los últimos 7 días, marca en la curva el punto
+correspondiente a "hoy". Es solo una aproximación educativa (no modela
+absorción ni la acumulación por dosis semanales repetidas) y no sustituye
+indicación médica.

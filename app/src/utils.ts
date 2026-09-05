@@ -29,3 +29,16 @@ export function diasHasta(fecha: string): number {
   const msPorDia = 24 * 60 * 60 * 1000
   return Math.round((objetivo.getTime() - inicioHoy.getTime()) / msPorDia)
 }
+
+/** Días transcurridos desde `fecha` hasta hoy (negativo si `fecha` es futura). */
+export function diasDesde(fecha: string): number {
+  return -diasHasta(fecha)
+}
+
+/** Vida media de eliminación de la semaglutida, en días (~165 horas, FDA/Novo Nordisk). */
+export const VIDA_MEDIA_DIAS = 165 / 24
+
+/** % de concentración restante de una dosis, `dias` después de aplicada (decaimiento de primer orden). */
+export function concentracionRelativa(dias: number): number {
+  return 100 * Math.pow(0.5, dias / VIDA_MEDIA_DIAS)
+}
