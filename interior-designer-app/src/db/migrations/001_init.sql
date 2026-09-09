@@ -31,12 +31,24 @@ CREATE TABLE clients (
 CREATE INDEX idx_clients_status ON clients(status);
 
 -- ─────────────────────────────────────────────────────────────────────────
+-- 1b. ÁREAS (catálogo fijo, igual que standard_measures — no editable por
+--     la usuaria, se puebla una sola vez desde src/db/seed/areas.ts).
+--     Se usa como lista de selección en pinturas y notas de campo, para
+--     poder filtrar de forma consistente en vez de texto libre.
+-- ─────────────────────────────────────────────────────────────────────────
+CREATE TABLE areas (
+  id           TEXT PRIMARY KEY NOT NULL,
+  name         TEXT NOT NULL UNIQUE,  -- ej. "Cocina", "Baño principal"
+  sort_order   INTEGER NOT NULL DEFAULT 0
+);
+
+-- ─────────────────────────────────────────────────────────────────────────
 -- 2. PINTURAS (por cliente y área)
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE paints (
   id          TEXT PRIMARY KEY NOT NULL,
   client_id   TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
-  area        TEXT NOT NULL,           -- texto libre, ej. "Sala", "Cocina"
+  area_id     TEXT NOT NULL REFERENCES areas(id),
   brand       TEXT,
   color_code  TEXT,
   color_name  TEXT,
@@ -47,7 +59,7 @@ CREATE TABLE paints (
 );
 
 CREATE INDEX idx_paints_client   ON paints(client_id);
-CREATE INDEX idx_paints_area     ON paints(client_id, area);
+CREATE INDEX idx_paints_area     ON paints(client_id, area_id);
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- 3. MEDIDAS ESTÁNDAR (biblioteca fija de referencia, no editable por la
@@ -89,21 +101,32 @@ CREATE INDEX idx_materials_type   ON materials(client_id, type);
 -- 5. NOTAS DE CAMPO (foto / video / voz / texto)
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE field_notes (
-  id               TEXT PRIMARY KEY NOT NULL,
-  client_id        TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
-  area             TEXT,
-  type             TEXT NOT NULL CHECK (type IN ('foto', 'video', 'voz', 'texto')),
-  file_uri         TEXT,          -- URI local (document directory de la app); NULL si type = 'texto'
-  media_library_id TEXT,          -- id en expo-media-library, si además se guardó en la galería
-  duration_seconds REAL,          -- solo video/voz
-  description      TEXT,          -- descripción corta de qué muestra
-  recorded_at      TEXT NOT NULL, -- fecha del recorrido/registro (puede diferir de created_at)
-  created_at       TEXT NOT NULL,
-  updated_at       TEXT NOT NULL
+  id                TEXT PRIMARY KEY NOT NULL,
+  client_id         TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  area_id           TEXT REFERENCES areas(id),   -- nullable: una nota puede ser general
+  type              TEXT NOT NULL CHECK (type IN ('foto', 'video', 'voz', 'texto')),
+  file_uri          TEXT,          -- URI local (document directory de la app); NULL si type = 'texto'
+  media_library_id  TEXT,          -- id en expo-media-library, si además se guardó en la galería
+  duration_seconds  REAL,          -- solo video/voz
+  description       TEXT,          -- descripción corta de qué muestra (escrita o copiada del transcript)
+  transcript        TEXT,          -- texto transcrito automáticamente (solo type = 'voz' o 'video')
+  transcript_status TEXT NOT NULL DEFAULT 'not_applicable'
+                    CHECK (transcript_status IN (
+                      'not_applicable', -- type = 'foto' o 'texto'
+                      'pending',        -- transcripción on-device en curso
+                      'done',
+                      'unavailable',    -- el dispositivo no soporta reconocimiento offline en este idioma
+                      'error'
+                    )),
+  recorded_at       TEXT NOT NULL, -- fecha del recorrido/registro (puede diferir de created_at)
+  created_at        TEXT NOT NULL,
+  updated_at        TEXT NOT NULL
 );
 
 CREATE INDEX idx_field_notes_client ON field_notes(client_id);
 CREATE INDEX idx_field_notes_type   ON field_notes(client_id, type);
+-- Búsqueda por palabra clave sobre description + transcript (LIKE); si la
+-- cantidad de notas crece mucho, migrar a FTS5.
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- 6. PENDIENTES (con recordatorio en calendario nativo)
