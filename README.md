@@ -1,3 +1,14 @@
+# Este repositorio contiene dos apps independientes
+
+- [`app/`](./app) — **App Semaglutida**, descrita abajo.
+- [`interior-designer-app/`](./interior-designer-app) — **Estudio de
+  Obra**, app móvil (Expo/React Native) para uso personal de una
+  diseñadora de interiores, offline-first. Ver la propuesta de estructura
+  y modelo de datos en
+  [`interior-designer-app/PROPUESTA.md`](./interior-designer-app/PROPUESTA.md).
+
+---
+
 # App Semaglutida
 
 App para hacer seguimiento a la aplicación de semaglutida: registra la
