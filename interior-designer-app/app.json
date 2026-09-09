@@ -29,13 +29,21 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite",
       "expo-camera",
       "expo-calendar",
+      "expo-splash-screen",
       [
         "expo-av",
         {
           "microphonePermission": "Se usa el micrófono para grabar notas de voz."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Las fotos y videos de las notas de campo se guardan en tu galería.",
+          "savePhotosPermission": "Las fotos y videos de las notas de campo se guardan en tu galería.",
+          "isAccessMediaLocationEnabled": false
         }
       ]
     ]

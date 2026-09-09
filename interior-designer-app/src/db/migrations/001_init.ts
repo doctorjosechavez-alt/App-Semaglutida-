@@ -1,14 +1,20 @@
--- 001_init.sql
--- Esquema inicial. SQLite (expo-sqlite). Todo el uso es 100% local / offline.
---
--- Convenciones:
---   * IDs: TEXT (UUID v4, generado en la app) — evita depender de autoincrement
---     al sincronizar en el futuro con Supabase/Firebase.
---   * Fechas: TEXT en formato ISO 8601 ("2026-09-09T14:30:00.000Z").
---   * Booleanos: INTEGER (0/1).
---   * created_at / updated_at en todas las tablas de usuario, para poder
---     ordenar y (más adelante) sincronizar por "última modificación".
+// 001_init — esquema inicial. SQLite (expo-sqlite). Todo el uso es 100%
+// local / offline.
+//
+// Convenciones:
+//   * IDs: TEXT (UUID v4, generado en la app) — evita depender de
+//     autoincrement al sincronizar en el futuro con Supabase/Firebase.
+//   * Fechas: TEXT en formato ISO 8601 ("2026-09-09T14:30:00.000Z").
+//   * Booleanos: INTEGER (0/1).
+//   * created_at / updated_at en todas las tablas de usuario, para poder
+//     ordenar y (más adelante) sincronizar por "última modificación".
+//
+// Se guarda como módulo TS (no .sql suelto) para que Metro lo empaquete
+// como texto sin necesitar un transformer de assets aparte. Una vez
+// aplicada en un dispositivo real, este archivo no se edita más — los
+// cambios de esquema futuros van en 002_*.ts, 003_*.ts, etc.
 
+export const MIGRATION_001_INIT = `
 PRAGMA foreign_keys = ON;
 
 -- ─────────────────────────────────────────────────────────────────────────
@@ -66,13 +72,13 @@ CREATE INDEX idx_paints_area     ON paints(client_id, area_id);
 --    usuaria — se puebla una sola vez desde src/db/seed/standardMeasures.ts)
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE standard_measures (
-  id         TEXT PRIMARY KEY NOT NULL,
-  category   TEXT NOT NULL,     -- ej. "Tomacorrientes", "Mesones de cocina"
-  item       TEXT NOT NULL,     -- ej. "Altura de tomacorriente sobre mesón"
-  value_text TEXT NOT NULL,     -- ej. "105–110 cm desde el piso"
-  value_min_cm REAL,            -- opcional, para poder ordenar/filtrar numéricamente
+  id           TEXT PRIMARY KEY NOT NULL,
+  category     TEXT NOT NULL,     -- ej. "Tomacorrientes", "Mesones de cocina"
+  item         TEXT NOT NULL,     -- ej. "Altura de tomacorriente sobre mesón"
+  value_text   TEXT NOT NULL,     -- ej. "105–110 cm desde el piso"
+  value_min_cm REAL,              -- opcional, para poder ordenar/filtrar numéricamente
   value_max_cm REAL,
-  notes      TEXT
+  notes        TEXT
 );
 
 CREATE INDEX idx_standard_measures_category ON standard_measures(category);
@@ -148,3 +154,4 @@ CREATE TABLE tasks (
 
 CREATE INDEX idx_tasks_client   ON tasks(client_id);
 CREATE INDEX idx_tasks_pending  ON tasks(client_id, done, archived, due_date);
+`;
